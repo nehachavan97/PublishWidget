@@ -1,0 +1,38 @@
+define("DS/PublishSubscribe/scripts/DSISWidgetInteractionsProperties",
+			[
+				"DS/PlatformAPI/PlatformAPI"
+			],function (
+				PlatformAPI
+			) {
+    var myWidget = {
+        
+     dataFull: [
+			],
+			
+			onLoadWidget: function(){
+				//Subscribe to the event
+				PlatformAPI.subscribe("DSISPilotTableUserId.Click", myWidget.ShowSelectProperties);
+			},
+			
+			ShowSelectProperties: function(data){
+				//Callback function called when the event happen, 
+				//is published by any other widget of the dashboard
+				var idClicked=data.userId;
+				var arrRow=data.selectedArray;
+				
+				var strHTML="<BR>";
+				strHTML=strHTML+"<h1>"+arrRow.firstName+" "+arrRow.lastName+"</h1>";
+				strHTML=strHTML+"<h3>"+arrRow.category+"</h3>";
+				strHTML=strHTML+"id : "+idClicked+"<BR>";
+				strHTML=strHTML+"country : "+arrRow.country+"<BR>";				
+				strHTML=strHTML+"age : "+arrRow.age+"<BR>";
+				strHTML=strHTML+"plane : "+arrRow.plane+"<BR>";
+				
+				widget.body.innerHTML=strHTML;
+			},		
+	   	
+    };
+    return myWidget;
+});
+
+
