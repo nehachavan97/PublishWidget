@@ -1,1 +1,87 @@
+define("DS/PublishSubscribe/scripts/DSISWidgetInteractions",
+			[
+				"DS/PlatformAPI/PlatformAPI"
+			],function (
+				PlatformAPI
+			) {
+				
+ 		   var myWidget = {
+        
+    		  dataFull: [
+				{firstName:"Neha", lastName:"Naik", userId:"NN", category:"Master class", country:"India", age:"23", plane:"Edge 540 V3"},
+				{firstName:"Nehaa", lastName:"Naika", userId:"NAN", category:"Master class", country:"India", age:"23", plane:"Edge 540 V3"},
+				{firstName:"Kiran", lastName:"Mane", userId:"KM", category:"Master class", country:"United States", age:"26", plane:"Edge 540 V3"},
+				{firstName:"Aarti", lastName:"Survase", userId:"AS", category:"Master class", country:"Germany", age:"25", plane:"Edge 540 V3"},
+				{firstName:"Michael", lastName:"Goulian", userId:"MG", category:"Master class", country:"United States", age:"27", plane:"Edge 540 V2"},
+				{firstName:"Rutuja", lastName:"Mane", userId:"RM", category:"Master class", country:"France", age:"23", plane:"Edge 540 V2"},
+				{firstName:"Petr", lastName:"Kopfstein", userId:"PK", category:"Master class", country:"Republic Czech", age:"28", plane:"Edge 540 V3"},
+				{firstName:"Nigel", lastName:"Lamb", userId:"NL", category:"Master class", country:"United Kingdom", age:"29", plane:"MXS-R"},
+				{firstName:"Megha", lastName:"Hulmani", userId:"MH", category:"Master class", country:"France", age:"24", plane:"Edge 540 V2"},
+				{firstName:"Pete", lastName:"McLeod", userId:"PM", category:"Master class", country:"Canada", age:"32", plane:"Edge 540 V3"},
+				{firstName:"Yoshihide", lastName:"Muroya", userId:"YM", category:"Master class", country:"Japan", age:"43", plane:"Edge 540 V3"}
+
+			],
+			
+			topicName:"DSISPilotTableUserId.Click",
+			
+			//Display the content of dataFull in a table
+			displayData: function(arrData){
+				widget.myWidget = myWidget;
+				var tableHTML="<table><thead><tr><th>First Name</th><th>Last Name</th></tr></thead><tbody>";				
+				for(var i=0; i<arrData.length; i++){
+					tableHTML=tableHTML+"<tr id='"+arrData[i].userId+"' rowSelected='false' onclick='widget.myWidget.clicOnRow(this, \""+arrData[i].userId+"\")'><td>"+arrData[i].firstName+"</td><td>"+arrData[i].lastName+"</td></tr>";				}
+				
+				tableHTML+="</tbody></table>";				
+				widget.body.innerHTML=tableHTML;
+			},
+			
+			//Method triggered by the Load event
+			onLoadWidget: function(){
+				myWidget.displayData(myWidget.dataFull);
+			},
+			
+			//Method triggered by the clic on a row of the table
+			clicOnRow: function(elem, userIdClicked){
+				var arrRow=myWidget.findUserArray(userIdClicked);
+				var rowIdClicked=elem.id;
+				var rowWasSelected=(elem.selected==="true" ? true : false);
+				var MyHighlightColor = widget.getValue("HighlightColor");
+				//Reset previous selection
+				for(var i=0; i<myWidget.dataFull.length; i++){
+					$("tr#"+myWidget.dataFull[i].userId).css("background-color","");
+					$("tr#"+myWidget.dataFull[i].userId).attr("rowSelected","false");
+				}
+				
+				//Apply color on new selection
+				if (rowWasSelected){
+					//So we remove the color
+					$("tr#"+rowIdClicked).css("background-color","");
+					$("tr#"+rowIdClicked).attr("rowSelected","false");
+				}else{
+					//we set the color
+					$("tr#"+rowIdClicked).css("background-color",MyHighlightColor);
+					$("tr#"+rowIdClicked).attr("rowSelected","true");
+				}
+				//Publish the selected array
+				PlatformAPI.publish(
+					myWidget.topicName,
+					{"userId":userIdClicked,
+					"selectedArray":arrRow}
+				);				
+			},
+			
+			//get the array of information corresponding to the selected row		
+			findUserArray: function(userIdToFind) {
+				for (var i = 0, len = myWidget.dataFull.length; i < len; i++) {
+					if (myWidget.dataFull[i].userId === userIdToFind)
+						return myWidget.dataFull[i]; 
+				}
+				return null; // The object was not found
+			}
+	   	
+    };
+	
+    return myWidget;
+});
+
 
